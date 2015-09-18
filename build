@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+cd src
+go build -o ../bin/sensor
+GOOS=linux GOARCH=386 go build -o ../bin/sensor32
+
+cd ..
+rm -rf sensor.zip
+zip -r sensor.zip bin/sensor*
+zip -r sensor.zip bin/run.sample
+
+rsync -avz sensor.zip root@toorop.fr:/srv/ftp/softs/tuto-ovh-openstdb/sensor.zip
