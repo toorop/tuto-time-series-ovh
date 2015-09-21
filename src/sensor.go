@@ -46,8 +46,8 @@ func main() {
 	}
 
 	// On initialise un nouveau client OpenSTDB
-	OpenSTDBClient, err := openstdb.NewClient(openstdb.ClientConfig{
-		Endpoint: "https://opentsdb.iot.runabove.io/api/put",
+	OpenSTDBClient, err := gopentsdb.NewClient(gopentsdb.ClientConfig{
+		Endpoint: "https://opentsdb.iot.runabove.io",
 		Username: username,
 		Password: password,
 	})
@@ -59,7 +59,7 @@ func main() {
 	// A chaque tour on va faire une serie de mesures
 	for {
 		// Cette variable va contenir les points a pousser vers OpenSTDB
-		points2Push := []openstdb.Point{}
+		points2Push := []gopentsdb.Point{}
 
 		// On fait une pause  entre chaque mesure
 		// pour les curieux le fait de la faire en début de boucle, nous permet de
@@ -74,21 +74,21 @@ func main() {
 		}
 
 		// On crée les trois points relatifs au load
-		ptLoadCurrent := openstdb.NewPoint()
+		ptLoadCurrent := gopentsdb.NewPoint()
 		ptLoadCurrent.Metric = "loadavg.current"
 		ptLoadCurrent.Timestamp = load.timestamp
 		ptLoadCurrent.Value = load.current
 		ptLoadCurrent.Tags["host"] = hostname
 		points2Push = append(points2Push, ptLoadCurrent)
 
-		ptLoad5Min := openstdb.NewPoint()
+		ptLoad5Min := gopentsdb.NewPoint()
 		ptLoad5Min.Metric = "loadavg.5min"
 		ptLoad5Min.Timestamp = load.timestamp
 		ptLoad5Min.Value = load.avg5
 		ptLoad5Min.Tags["host"] = hostname
 		points2Push = append(points2Push, ptLoad5Min)
 
-		ptLoad15Min := openstdb.NewPoint()
+		ptLoad15Min := gopentsdb.NewPoint()
 		ptLoad15Min.Metric = "loadavg.15min"
 		ptLoad15Min.Timestamp = load.timestamp
 		ptLoad15Min.Value = load.avg15
@@ -119,7 +119,7 @@ func main() {
 					diffSum = diffUser + diffNice + diffSys + diffWait + diffIdle
 
 					// user
-					point := openstdb.NewPoint()
+					point := gopentsdb.NewPoint()
 					point.Metric = "cpu." + cpu + ".user.percent"
 					point.Timestamp = now
 					point.Value = float64(diffUser * 100 / diffSum)
@@ -127,7 +127,7 @@ func main() {
 					points2Push = append(points2Push, point)
 
 					// nice
-					point = openstdb.NewPoint()
+					point = gopentsdb.NewPoint()
 					point.Metric = "cpu." + cpu + ".nice.percent"
 					point.Timestamp = now
 					point.Value = float64(diffNice * 100 / diffSum)
@@ -135,7 +135,7 @@ func main() {
 					points2Push = append(points2Push, point)
 
 					// sys
-					point = openstdb.NewPoint()
+					point = gopentsdb.NewPoint()
 					point.Metric = "cpu." + cpu + ".sys.percent"
 					point.Timestamp = now
 					point.Value = float64(diffSys * 100 / diffSum)
@@ -143,7 +143,7 @@ func main() {
 					points2Push = append(points2Push, point)
 
 					// wait
-					point = openstdb.NewPoint()
+					point = gopentsdb.NewPoint()
 					point.Metric = "cpu." + cpu + ".wait.percent"
 					point.Timestamp = now
 					point.Value = float64(diffWait * 100 / diffSum)
@@ -151,7 +151,7 @@ func main() {
 					points2Push = append(points2Push, point)
 
 					// idle
-					point = openstdb.NewPoint()
+					point = gopentsdb.NewPoint()
 					point.Metric = "cpu." + cpu + ".idle.percent"
 					point.Timestamp = now
 					point.Value = float64(diffIdle * 100 / diffSum)
@@ -167,7 +167,7 @@ func main() {
 		memStats, err := GetMemStats()
 		if err == nil {
 			// Free
-			ptMemFree := openstdb.NewPoint()
+			ptMemFree := gopentsdb.NewPoint()
 			ptMemFree.Metric = "mem.free"
 			ptMemFree.Timestamp = now
 			ptMemFree.Value = float64(memStats["MemFree"])
@@ -175,7 +175,7 @@ func main() {
 			points2Push = append(points2Push, ptMemFree)
 
 			// Memoire Utilisée
-			ptMemUsed := openstdb.NewPoint()
+			ptMemUsed := gopentsdb.NewPoint()
 			ptMemUsed.Metric = "mem.used"
 			ptMemUsed.Timestamp = now
 			ptMemUsed.Value = float64(memStats["MemTotal"] - memStats["MemFree"])
@@ -183,7 +183,7 @@ func main() {
 			points2Push = append(points2Push, ptMemUsed)
 
 			// Cached
-			ptMemCached := openstdb.NewPoint()
+			ptMemCached := gopentsdb.NewPoint()
 			ptMemCached.Metric = "mem.cached"
 			ptMemCached.Timestamp = now
 			ptMemCached.Value = float64(memStats["Cached"])
@@ -191,7 +191,7 @@ func main() {
 			points2Push = append(points2Push, ptMemCached)
 
 			// Buffers
-			ptMemBuffers := openstdb.NewPoint()
+			ptMemBuffers := gopentsdb.NewPoint()
 			ptMemBuffers.Metric = "mem.buffers"
 			ptMemBuffers.Timestamp = now
 			ptMemBuffers.Value = float64(memStats["Buffers"])
@@ -199,7 +199,7 @@ func main() {
 			points2Push = append(points2Push, ptMemBuffers)
 
 			// Swap free
-			ptSwapFree := openstdb.NewPoint()
+			ptSwapFree := gopentsdb.NewPoint()
 			ptSwapFree.Metric = "mem.swap.free"
 			ptSwapFree.Timestamp = now
 			ptSwapFree.Value = float64(memStats["SwapFree"])
@@ -207,7 +207,7 @@ func main() {
 			points2Push = append(points2Push, ptSwapFree)
 
 			// Swap used
-			ptSwapused := openstdb.NewPoint()
+			ptSwapused := gopentsdb.NewPoint()
 			ptSwapused.Metric = "mem.swap.used"
 			ptSwapused.Timestamp = now
 			ptSwapused.Value = float64(memStats["SwapTotal"] - memStats["SwapFree"])
@@ -223,7 +223,7 @@ func main() {
 			timeDelta := uint64(io.timestamp - netIOPrev.timestamp)
 
 			// IN
-			ptNetIn := openstdb.NewPoint()
+			ptNetIn := gopentsdb.NewPoint()
 			ptNetIn.Metric = "net.in"
 			ptNetIn.Timestamp = io.timestamp
 			ptNetIn.Value = float64((io.in - netIOPrev.in) / timeDelta)
@@ -231,7 +231,7 @@ func main() {
 			points2Push = append(points2Push, ptNetIn)
 
 			// OUT
-			ptNetOut := openstdb.NewPoint()
+			ptNetOut := gopentsdb.NewPoint()
 			ptNetOut.Metric = "net.out"
 			ptNetOut.Timestamp = io.timestamp
 			ptNetOut.Value = float64((io.out - netIOPrev.out) / timeDelta)
@@ -248,14 +248,14 @@ func main() {
 		} else if disksIOPrev != nil {
 			for disk, stats := range disksIO {
 				timeDelta := uint64(stats.Timestamp - disksIOPrev[disk].Timestamp)
-				point := openstdb.NewPoint()
+				point := gopentsdb.NewPoint()
 				point.Metric = "disk." + disk + ".reads"
 				point.Timestamp = stats.Timestamp
 				point.Value = float64((stats.Reads - disksIOPrev[disk].Reads) / timeDelta)
 				point.Tags["host"] = hostname
 				points2Push = append(points2Push, point)
 
-				point = openstdb.NewPoint()
+				point = gopentsdb.NewPoint()
 				point.Metric = "disk." + disk + ".writes"
 				point.Timestamp = stats.Timestamp
 				point.Value = float64((stats.Writes - disksIOPrev[disk].Writes) / timeDelta)
