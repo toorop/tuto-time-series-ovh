@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export SENSOR_HOSTNAME="trooper"
+export SENSOR_HOSTNAME=HOSTNAME
 export SENSOR_OPENSTDB_USERNAME="write token id"
 export SENSOR_OPENSTDB_PASSWORD="write token password"
 export SENSOR_PERIOD=10
