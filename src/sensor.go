@@ -47,9 +47,10 @@ func main() {
 
 	// On initialise un nouveau client OpenSTDB
 	OpenSTDBClient, err := gopentsdb.NewClient(gopentsdb.ClientConfig{
-		Endpoint: "https://opentsdb.iot.runabove.io",
-		Username: username,
-		Password: password,
+		Endpoint:           "https://opentsdb-gra1.tsaas.ovh.com",
+		Username:           username,
+		Password:           password,
+		InsecureSkipVerify: false,
 	})
 	if err != nil {
 		log.Fatalln(err)
